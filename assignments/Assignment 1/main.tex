@@ -1,0 +1,229 @@
+\documentclass[fleqn, 12pt]{article}
+
+% packages %
+\usepackage[headheight=110pt,margin=1in]{geometry} % page margins %
+\usepackage{mathtools, amssymb} % math %
+\usepackage{tabularx, multirow} % tables %
+\usepackage{listings} % code %
+\usepackage{graphicx} % graphics %
+\usepackage{enumerate} % lists %
+\usepackage{adjustbox} % images %
+\usepackage[T1]{fontenc} % fonts %
+\usepackage[protrusion=true,expansion=true]{microtype} % font clarity %
+\usepackage{fancyhdr} % headers and footers %
+\usepackage{lastpage} % reference page numbers %
+\usepackage{color} % colors for code
+\usepackage{tikz} % for graphs
+\usepackage{soul} % for strikthroughout
+
+
+% Document details %
+\newcommand{\university}{University of Ottawa}
+\newcommand{\name}{Matthew Langlois}
+\newcommand{\studentNumber}{7731813}
+\newcommand{\semester}{Fall 2017}
+\newcommand{\assignmentType}{Assignment}
+\newcommand{\assignemntNumber}{1}
+\newcommand{\dueDate}{Friday Sept 22}
+\newcommand{\courseCode}{CSI4108}
+\newcommand{\courseTitle}{Cryptography}
+
+% Center image and diagrams %
+\adjustboxset*{center}
+
+% Prevent paragraph indents, this isn't an English assignment! %
+\newlength\tindent
+\setlength{\tindent}{\parindent}
+\setlength{\parindent}{0pt}
+
+% fix padding on code indents %
+\lstset{
+    frame=single,
+}
+
+% inline code
+\definecolor{codegray}{gray}{0.9}
+\newcommand{\code}[1]{\colorbox{codegray}{\texttt{#1}}}
+
+% Graphing stuff
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{matrix}
+\usetikzlibrary{automata}
+
+% Define ceiling and floor functions
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% Create set compliment command %
+\newcommand{\setcomp}[1]{{#1}^{\mathsf{c}}}
+
+% Create logic command aliases %
+\newcommand{\limplies}{\rightarrow}
+\newcommand{\nequiv}{\not\equiv}
+\newcommand{\liff}{\leftrightarrow}
+
+% Document header %
+\newcommand{\makeheader}{
+    \noindent
+    \courseTitle \hfill \university\\
+    \courseCode \hfill \semester
+    \begin{center}
+        \textbf{\assignmentType \#\assignemntNumber}\\
+        \name \hspace{1pt} - \studentNumber\\
+        \dueDate\\ 
+    \end{center}
+    \vspace{6pt}
+    \hrule
+}
+
+% first page header & footer %
+\fancypagestyle{firstpage}{
+  \fancyhf{}
+  \renewcommand{\footrulewidth}{0.1mm}
+  \fancyfoot[R]{Assignment \assignemntNumber}
+  \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+  \fancyfoot[L]{\courseCode}
+  \renewcommand{\headrulewidth}{0mm}
+}
+
+% Page header and footers %
+\fancyhf{}
+\renewcommand{\footrulewidth}{0.1mm}
+\fancyfoot[R]{Assignment \assignemntNumber}
+\fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+\fancyfoot[L]{\courseCode}
+\fancyhead[L]{\name}
+\fancyhead[R]{\studentNumber}
+
+% Apply headers & footer page style %
+\pagestyle{fancy}
+\begin{document}
+
+% ignore fancy headers on this page and use document header %
+\thispagestyle{firstpage}
+\makeheader
+
+\section*{Question 1}
+
+\begin{enumerate}[a)]
+    \item
+        In class it was shown that the Hill cipher can be broken using a known-plaintext attack. Using an even stronger model of the adversary, we find that the Hill cipher can be easily broken with a chosen-plaintext attack. Explain how a chosen-plaintext attack can be used to determine the encryption key without requiring the execution of a matrix inversion or the solution of a set of linear equations.\\
+        
+        First you must find the keysize being used on the matrix. A simple way to do this is to repeat a bunch of the same letter to determine when the cipher text repeats. Once you know the size of the key a chosen-plaintext attack can be used to directly find the key by modifying only one letter in the message each time. That letter will then reveal the identity matrix which will give you the key.
+        
+        For example if you know the length of the key is 3 for the hill cipher then you can just use the messages: BAA, ABA, AAB. The resulting letters in place of B will be the key. This is because the B will directly give the column of the key matrix. Multiple chosen plaintexts can be used to dump all of the columns which can then be used to assemble the key matrix.
+        
+        
+    \item
+        Is it realistic to assume that an adversary can mount a chosen-plaintext attack in real life? Why or why not (give a convincing answer)?\\
+        
+        Yes, it is realistic to assume that an adversary can mount a chosen-plaintext attack in real life. This would require that the chosen-plaintext for each encryption is done using the same encryption key. If that was the case then the attacker could send multiple messages with only one letter different to reveal the columns of the identity matrix thus dumping the key.
+        
+    \item
+        Compared with a chosen-plaintext attack, would a chosen-ciphertext attack be more effective, less effective, or equally effective against this cipher?\\
+        
+        The chosen-plaintext attack is the simpler option since we can give it input to directly dump the key. If you were using the chose-cipher text then you would need to use matrix math to compute the inputs for the chose-ciphertext. Once a chosen-ciphertext is generated then the rest of the process is similar to the chosen-plaintext attack.
+\end{enumerate}
+
+\section*{Question 2}
+
+\begin{enumerate}
+    \item
+        The Caesar cipher is an example of a cipher based on a shifted alphabet, where each letter of the plaintext is shifted by k positions (that is, $c = p + k \mod 26$). A generalization uses multiplication as the basis, so that $c = pk \mod 26$. In such a cipher, the values k = 0 and k = 1 would obviously not be wise choices. List all other values for k that would be unwise. What is unwise about these choices? 
+        
+        The values which would be unwise are: 2, 4, 6, 8, 10, 12, 13, 14, 16, 18, 20, 22, 24. These values are unwise because they do not create a 1-1 mapping from the input to the output value thus making decryption much more difficult. For example if $k=2$ was used then $c=5 \cdot 2 \mod 26 = 10 = 36$ and $c = 18 \cdot 2 \mod 26 = 10$. This is true for any value which is not co-prime with 26. Thus the keyspace is actually smaller now since less than half of the alphabet can be used as a key.
+        
+    \item
+        In this multiplication cipher, if the ciphertext is KSHHUKRANMGUH, find k and p.\\
+        
+        Since we know the only values that can be used for the key are 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25 then we can just apply exhaustive search to find the correct decryption key. Testing all input values when $k=5$ you get CORRECTANSWER. This is done using the multiplicative inverse ($c \cdot k^{-1} \mod 26 = p$) so for example using K (10) and $k=5$ thus $k^{-1}=21$ we get $10 \cdot 21 \mod 26 = 2$ or C.
+        
+        
+    \item
+        Does the multiplicative version have any advantages over the original Caesar cipher?\\
+        
+        There is the advantage of having the distance between the input and output character vary. In the Caesar cipher the distance from the input to the output for all letters is k. Where as in this version the distance per character will vary. Unfortunately this "advantage" comes at the cost of having a smaller keyspace. Furthermore this doesn't prevent simple analysis such as frequency analysis since any given input character will always map to the same given output character for example if T maps to C for a single occurrence then it will T will always map to C for the specified key. Overall this implementation is sub-optimal compared to the original Caesar cipher since it has no added benefits and just has a smaller key space.
+\end{enumerate}
+
+\newpage
+\section*{Question 3}
+
+\begin{enumerate}[a)]
+    \item 
+        A further generalization of the Caesar cipher is the affine substitution cipher, in which $c = (pk1 + k2) \mod 26$. What is the size of the key space for this cipher?\\
+
+        We know that the affine cipher must meet 2 properties:
+        \begin{enumerate}[1)]
+            \item $k_1$ must be co-prime (1,3,5,7,9,11,15,17,19,21,23,25)
+            \item $k_2$ must exist in the alphabet (in this case mod 26)
+        \end{enumerate}
+        
+        $\therefore$ we are left with the keyspace of $12 \cdot 26=312$.
+    
+    \item
+        If it is suspected that the plaintext letter e (4) corresponds to the ciphertext letter p (15), what is the new size of the key space for the attacker?\\
+    
+        For each value in $k_1$ there is only one value for $k_2$ which satisfies the equation $c=pk_1+k_2$. $\therefore$ the new keyspace would be 12 since there are only 12 values which will satisfy the equation. 
+        
+        For example using ciphertext p (15) and plaintext e (4):\\
+        $15=4 \cdot 1 + 11 \mod 26$\\
+        $15=4 \cdot 3 + 3 \mod 26$\\
+        $15=4 \cdot 5 + 21 \mod 26$\\
+        ...\\
+        $15=4 \cdot 25 + 19 \mod 26$\\
+        
+    \item
+        If it is known that the plaintext letter e (4) corresponds to the ciphertext letter p (15) and that the plaintext letter h (7) corresponds to the ciphertext letter e (4), break the cipher by solving for k1 and k2 (use brute force as well as a more efficient method)\\
+    
+        Through brute force (using the known data from above) I was able to determine that the proper value was when $k_1=5$ and $k_2=21$. That is because the only time that $4=7k_1 + k_2 \mod 26$ is when $k_1=5$ and $k_2=21$.
+        
+        Without using bruteforce we can just solve using a system of linear equations: 
+        
+        $
+            \begin{aligned}
+                15 &=4 \cdot k_1 + k_2 \mod 26\\
+                4  &=7 \cdot k_1 + k_2 \mod 26\\\\
+            \end{aligned}
+        $
+        \newpage
+        Using substitution...\\\\
+        $
+            \begin{aligned}
+                15 &= 4 \cdot k_1 - 7 \cdot k_1 + 4 \mod 26\\
+                11 &= -3 \cdot k_1 \mod 26\\
+                3 \cdot k_1 &= -11 \mod 26\\
+                3 \cdot k_1 &= 26 - 11 \mod 26\\
+                3 (9)  \cdot k_1 &= 15 (9) \mod 26\\
+                k_1 &= 5\\\\
+            \end{aligned}
+        $\\
+        Now sub in $k_1$ and solve for $k_2$...\\\\
+        $
+            \begin{aligned}
+                15 &= 4 \cdot 5 + k_2 \mod 26\\
+                15 &= 20 + k_2 \mod 26\\
+                -k_2 &= 20 - 15 \mod 26\\
+                -k_2 &= 5 \mod 26\\
+                k_2 &= -5 \mod 26\\
+                k_2 &= 26-5 \mod 26\\
+                k_2 &= 21 \mod 26\\
+            \end{aligned}
+        $
+    \item
+        If we further generalize this cipher to $c = pk_1k_2 + k_3 + k_4 \mod 26$, how much security have we gained (in terms of key space and in terms of difficulty to break)?
+        
+        For the cipher to still work $k_1k_2$ must be co-prime to 26 (as seen in part a). This means that there are still only a total of 12 options for $k_1k_2$. If it is not co-prime then it would be possible for the cipher to produce the same cipher text for different plain texts thus making decryption much more difficult. Now $k_3$ and $k_4$ will always come out to be less than 26 due to the modular arithmetic. For example if $k_3 = 20$ and $k_4 = 10$ then they could also be represented as $k_3=2$ and $k_4=2$.
+        
+        $\therefore$ there is no added security since $k_1k_2$ must still be co-prime and $k_3 + k_4$ will ultimately exist within the alphabet for the cipher. Thus our key space for mod 26 is still only $12 \cdot 26 = 312$.
+\end{enumerate}
+
+\newpage
+
+\section*{Question 4}
+
+Consider the transposition cipher, which permutes each block of m plaintext (alphabetic) characters in an n-bit message using a fixed m-valued permutation key. Someone tells you that because the data is very confidential, they will use double encryption (i.e., the ciphertext will be re-encrypted using an independent m-valued permutation key). Compute the additional security that this will provide in terms of m and n.\\
+
+No additional security is added by re-encrypting with a second key. The first key permutes the plaintext and the second key just re-permutes the same block of text again. The contents within the columns of the transpositions doesn't change since the key size was exactly the same for both of the permutations. Essentially the columns are arranged one way by the first key... and then the same columns are just re-arranged by the second key thus offering no additional security than what the first key could offer.
+
+\end{document}

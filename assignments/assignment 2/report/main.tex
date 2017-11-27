@@ -1,0 +1,264 @@
+\documentclass[fleqn, 12pt]{article}
+
+% packages %
+\usepackage[includeheadfoot,headheight=15pt,margin=0.5in,left=1in,right=1in,headsep=10pt]{geometry} % page margins %
+\usepackage{mathtools, amssymb} % math %
+\usepackage{tabularx, multirow} % tables %
+\usepackage{minted} % code %
+\usepackage{graphicx} % graphics %
+\usepackage{enumerate} % lists %
+\usepackage{adjustbox} % images %
+\usepackage[T1]{fontenc} % fonts %
+\usepackage[protrusion=true,expansion=true]{microtype} % font clarity %
+\usepackage{fancyhdr} % headers and footers %
+\usepackage{lastpage} % reference page numbers %
+\usepackage{color} % colors for code %
+\usepackage{tikz} % for graphs %
+\usepackage{soul} % for strikethroughout %
+\usepackage{upquote} % Fix single quotes %
+\usepackage{etoolbox} % Conditional checks %
+\usepackage{hyperref} % Hyperlinks %
+\usepackage{indentfirst} % fix indentation - only for essays %
+\usepackage[figure,table]{totalcount} % For counting tables and figures %
+\usepackage[utf8]{inputenc} % Encode as UTF-8 %
+\usepackage{biblatex} % References %
+\addbibresource{references.bib} % bib source %
+
+% Document details %
+\newcommand{\university}{University of Ottawa}
+\newcommand{\name}{Matthew Langlois}
+\newcommand{\studentNumber}{7731813}
+\newcommand{\semester}{Fall 2017}
+\newcommand{\assignmentType}{Assignment}
+\newcommand{\assignmentNumber}{2}
+\newcommand{\dueDate}{Oct 10}
+\newcommand{\courseCode}{CSI4108}
+\newcommand{\courseTitle}{Intro to Cryptography}
+\newcommand{\essayTitle}{<Title>} % only for essays %
+\newcommand{\essaySubtitle}{<subtitle>} % only for essays %
+\newcommand{\essayAbstract}{} % Only for essays -- leave empty for no abstract %
+
+% Center image and diagrams %
+\adjustboxset*{center}
+
+% Code settings %
+\setminted{
+    fontfamily=tt,
+    gobble=0,
+    frame=single,
+    funcnamehighlighting=true,
+    tabsize=4,
+    obeytabs=false,
+    mathescape=false
+    samepage=false,
+    showspaces=false,
+    showtabs =false,
+    texcl=false,
+    breaklines=true,
+}
+
+% inline code %
+\definecolor{codegray}{gray}{0.9}
+\newcommand{\code}[1]{\colorbox{codegray}{\texttt{#1}}}
+
+% Code from tile %
+\newcommand{\codefile}{\inputminted}
+
+% Graphing stuff %
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{matrix}
+\usetikzlibrary{automata}
+
+% Define ceiling and floor functions %
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% Create set compliment command %
+\newcommand{\setcomp}[1]{{#1}^{\mathsf{c}}}
+
+% Create logic command aliases %
+\newcommand{\limplies}{\rightarrow}
+\newcommand{\nequiv}{\not\equiv}
+\newcommand{\liff}{\leftrightarrow}
+
+% first page header & footer %
+\fancypagestyle{assignment}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \renewcommand{\headrulewidth}{0mm}
+}
+
+% Frontmatter for essay page numbering%
+\fancypagestyle{frontmatter}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{EndFrontMatter}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \fancyhead[L]{\name}
+    \fancyhead[R]{\studentNumber}
+}
+
+% Essay body page numbering %
+\fancypagestyle{body}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \fancyhead[L]{\name}
+    \fancyhead[R]{\studentNumber}
+}
+
+% Page header and footers %
+\fancyhf{}
+\renewcommand{\footrulewidth}{0.1mm}
+\fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+\fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+\fancyfoot[L]{\courseCode\text{ }\semester}
+\fancyhead[L]{\name}
+\fancyhead[R]{\studentNumber}
+
+% Apply headers & footer page style %
+\pagestyle{fancy}
+
+% Assignment first page header %
+\newcommand{\beginassignemnt}{
+    % Prevent paragraph indents, this isn't an English assignment! %
+    \newlength\tindent
+    \setlength{\tindent}{\parindent}
+    \setlength{\parindent}{0pt}
+
+    \thispagestyle{assignment}
+    \noindent
+    \courseTitle \hfill \university\\
+    \courseCode \hfill \semester
+    \begin{center}
+        \textbf{\assignmentType\text{ }\#\assignmentNumber}\\
+        \name \hspace{1pt} - \studentNumber\\
+        \dueDate\\
+    \end{center}
+    \vspace{6pt}
+    \hrule
+    \vspace{1.5\headsep}
+}
+
+% Essay titlepage stuff %
+\newcommand{\beginessay}{
+    % Load all citations %
+    \nocite{*}
+
+    % Special numbering for front matter %
+    \pagestyle{frontmatter}
+    \pagenumbering{roman}
+
+    % Titlepage stuff %
+    \begin{center}
+        \normalsize
+        \textsc{\university}\\[5cm]
+        \LARGE \textbf{\MakeUppercase{\essayTitle}}\\[0.5cm]
+        \large \text{ }\essaySubtitle\text{ }\\[10cm] % blank \texts are used for empty subtitles %
+        \normalsize
+        \textsc{\name}\\
+        \textsc{\studentNumber}\\
+        \textsc{\courseCode}\\
+        \textsc{\semester}\\
+        \textsc{\dueDate}
+    \end{center}
+    \thispagestyle{empty}
+    % End title page stuff %
+
+    % Table of Contents %
+    \newpage
+    \tableofcontents
+    \newpage
+
+    % If more than 1 table/figure show appropriate lists %
+    \iftotalfigures
+        \addcontentsline{toc}{section}{\listfigurename}
+        \listoffigures
+    \fi
+    \iftotaltables
+        \addcontentsline{toc}{section}{\listtablename}
+        \listoftables
+    \fi
+
+    % Display an abstract if the abstract isn't empty %
+    \ifdefempty{\essayAbstract}{}{
+        \newpage
+        \addcontentsline{toc}{section}{Abstract}
+        \begin{abstract}
+            \essayAbstract
+        \end{abstract}
+
+    }
+    \label{EndFrontMatter}
+    \newpage
+
+    % Reset page numbering %
+    \pagenumbering{arabic}
+    \pagestyle{body}
+}
+
+% Update the bibliography command to add its self to the references
+\let\oldprintbib\printbibliography
+\renewcommand{\printbibliography}{
+    \newpage
+    \oldprintbib
+    \addcontentsline{toc}{section}{References}
+    \newpage
+}
+
+% Fixes a Pygments bug in ES6 -- Thanks ShareLatex! %
+\makeatletter
+\expandafter\def\csname PYGdefault@tok@err\endcsname{\def\PYGdefault@bc##1{{\strut ##1}}}
+\makeatother
+
+% Begin the document %
+\begin{document}
+
+% makes the header for assignment/titlepage for essay %
+% \beginessay
+\beginassignemnt
+
+
+\section*{Question 1}
+
+The following answers were generated by a program I built using Node JS. I have attached the program to this email. Please note that GMail prevents me from attaching a .js file, so to run the program you will need to rename it from \code{des.txt} to \code{des.js}.
+
+\codefile{javascript}{output.js}
+
+\section*{Question 2}
+
+% I didn't fully understand how to complete this question.
+
+\begin{tabular}{|c|c||c|c|}
+\hline
+    Partial Subkey & Bias & Partial Subkey & Bias\\\hline
+    6 5 & 0.0076 &  7 5 & 0.0008\\\hline
+    6 6 & 0.0056 & 7 6 & 0.0031\\\hline
+    6 7 & 0.0004 & 7 7 & 0.0060\\\hline
+    6 8 & 0.0027 & 7 8 & 0.0056\\\hline
+    6 9 & 0.0033 & 7 9 & 0.0085\\\hline
+    6 A & 0.0100 & 7 A & 0.0124\\\hline
+    6 B & 0.0021 & 7 B & 0.0007\\\hline
+    6 C & 0.0135 & 7 C & 0.0086\\\hline
+    6 D & 0.0192 & \textbf{7 D} & \textbf{0.0288}\\\hline
+    6 E & 0.0043 & 7 E & 0.0072\\\hline
+    6 F & 0.0030 & 7 F & 0.0062\\\hline
+    7 0 & 0.0180 & 8 0 & 0.0110\\\hline
+    7 1 & 0.0169 & 8 1 & 0.0115\\\hline
+    7 2 & 0.0046 & 8 2 & 0.0096\\\hline
+    7 3 & 0.0154 & 8 3 & 0.0030\\\hline
+    7 4 & 0.0124 & 8 4 & 0.0001\\\hline
+\end{tabular}\\\\
+
+As seen in the results for the partial subkey table \code{7 D} was the subkey with the highest bias. According to Heys' tutorial on cryptanalysis (page 16) the key with the highest bias is likely to be the correct subkey however is not guaranteed since there can be in consistences due to s-boxes influencing the partial decryption of subkeys. Therefore in this case linear cryptanalysis was successful in identifying the key 7 D.
+
+
+
+\end{document}
