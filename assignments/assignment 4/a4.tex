@@ -1,0 +1,328 @@
+
+\documentclass[fleqn, 12pt]{article}
+
+% packages %
+\usepackage[includeheadfoot,headheight=15pt,margin=0.5in,left=1in,right=1in,headsep=10pt]{geometry} % page margins %
+\usepackage{mathtools, amssymb} % math %
+\usepackage{tabularx, multirow} % tables %
+\usepackage[outputdir=.latexcache]{minted} % code %
+\usepackage{graphicx} % graphics %
+\usepackage{enumerate} % lists %
+\usepackage{adjustbox} % images %
+\usepackage[T1]{fontenc} % fonts %
+\usepackage[protrusion=true,expansion=true]{microtype} % font clarity %
+\usepackage{fancyhdr} % headers and footers %
+\usepackage{lastpage} % reference page numbers %
+\usepackage{color} % colors for code %
+\usepackage{tikz} % for graphs %
+\usepackage{soul} % for strikethroughout %
+\usepackage{upquote} % Fix single quotes %
+\usepackage{etoolbox} % Conditional checks %
+\usepackage[hidelinks]{hyperref} % Hyperlinks %
+\usepackage{indentfirst} % fix indentation - only for essays %
+\usepackage[figure,table]{totalcount} % For counting tables and figures %
+\usepackage[utf8]{inputenc} % Encode as UTF-8 %
+\usepackage{biblatex} % References %
+\addbibresource{references.bib} % bib source %
+
+\allowdisplaybreaks
+
+% Document details %
+\newcommand{\university}{University of Ottawa}
+\newcommand{\name}{Matthew Langlois}
+\newcommand{\studentNumber}{7731813}
+\newcommand{\semester}{Fall 2017}
+\newcommand{\assignmentType}{Assignment}
+\newcommand{\assignmentNumber}{4}
+\newcommand{\dueDate}{Dec. 4}
+\newcommand{\courseCode}{CSI4118}
+\newcommand{\courseTitle}{Cryptography}
+\newcommand{\essayTitle}{<Title>} % only for essays %
+\newcommand{\essaySubtitle}{<subtitle>} % only for essays %
+\newcommand{\essayAbstract}{} % Only for essays -- leave empty for no abstract %
+
+% Center image and diagrams %
+\adjustboxset*{center}
+
+% Code settings %
+\setminted{
+    fontfamily=tt,
+    gobble=0,
+    frame=single,
+    funcnamehighlighting=true,
+    tabsize=4,
+    obeytabs=false,
+    mathescape=false
+    samepage=false,
+    showspaces=false,
+    showtabs =false,
+    texcl=false,
+    breaklines=true,
+}
+
+% inline code %
+\definecolor{codegray}{gray}{0.9}
+\newcommand{\code}[2]{\colorbox{codegray}{\mintinline{#1}{#2}}}
+
+% Code from tile %
+\newcommand{\codefile}{\inputminted}
+
+% Graphing stuff %
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{matrix}
+\usetikzlibrary{automata}
+
+% Define ceiling and floor functions %
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% Create set compliment command %
+\newcommand{\setcomp}[1]{{#1}^{\mathsf{c}}}
+
+% Create logic command aliases %
+\newcommand{\limplies}{\rightarrow}
+\newcommand{\nequiv}{\not\equiv}
+\newcommand{\liff}{\leftrightarrow}
+
+% first page header & footer %
+\fancypagestyle{assignment}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \renewcommand{\headrulewidth}{0mm}
+}
+
+% Frontmatter for essay page numbering%
+\fancypagestyle{frontmatter}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{EndFrontMatter}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \fancyhead[L]{\name}
+    \fancyhead[R]{\studentNumber}
+}
+
+% Essay body page numbering %
+\fancypagestyle{body}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \fancyhead[L]{\name}
+    \fancyhead[R]{\studentNumber}
+}
+
+% Page header and footers %
+\fancyhf{}
+\renewcommand{\footrulewidth}{0.1mm}
+\fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+\fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+\fancyfoot[L]{\courseCode\text{ }\semester}
+\fancyhead[L]{\name}
+\fancyhead[R]{\studentNumber}
+
+% Apply headers & footer page style %
+\pagestyle{fancy}
+
+% Assignment first page header %
+\newcommand{\beginassignemnt}{
+    % Prevent paragraph indents, this isn't an English assignment! %
+    \newlength\tindent
+    \setlength{\tindent}{\parindent}
+    \setlength{\parindent}{0pt}
+
+    \thispagestyle{assignment}
+    \noindent
+    \courseTitle \hfill \university\\
+    \courseCode \hfill \semester
+    \begin{center}
+        \textbf{\assignmentType\text{ }\#\assignmentNumber}\\
+        \name \hspace{1pt} - \studentNumber\\
+        \dueDate\\
+    \end{center}
+    \vspace{6pt}
+    \hrule
+    \vspace{1.5\headsep}
+}
+
+% Essay titlepage stuff %
+\newcommand{\beginessay}{
+    % Load all citations %
+    \nocite{*}
+
+    % Special numbering for front matter %
+    \pagestyle{frontmatter}
+    \pagenumbering{roman}
+
+    % Titlepage stuff %
+    \begin{center}
+        \normalsize
+        \textsc{\university}\\[5cm]
+        \LARGE \textbf{\MakeUppercase{\essayTitle}}\\[0.5cm]
+        \large \text{ }\essaySubtitle\text{ }\\[10cm] % blank \texts are used for empty subtitles %
+        \normalsize
+        \textsc{\name}\\
+        \textsc{\studentNumber}\\
+        \textsc{\courseCode}\\
+        \textsc{\semester}\\
+        \textsc{\dueDate}
+    \end{center}
+    \thispagestyle{empty}
+    % End title page stuff %
+
+    % Table of Contents %
+    \newpage
+    \tableofcontents
+    \newpage
+
+    % If more than 1 table/figure show appropriate lists %
+    \iftotalfigures
+        \addcontentsline{toc}{section}{\listfigurename}
+        \listoffigures
+    \fi
+    \iftotaltables
+        \addcontentsline{toc}{section}{\listtablename}
+        \listoftables
+    \fi
+
+    % Display an abstract if the abstract isn't empty %
+    \ifdefempty{\essayAbstract}{}{
+        \newpage
+        \addcontentsline{toc}{section}{Abstract}
+        \begin{abstract}
+            \essayAbstract
+        \end{abstract}
+
+    }
+    \label{EndFrontMatter}
+    \newpage
+
+    % Reset page numbering %
+    \pagenumbering{arabic}
+    \pagestyle{body}
+}
+
+% Update the bibliography command to add its self to the references
+\let\oldprintbib\printbibliography
+\renewcommand{\printbibliography}{
+    \newpage
+    \oldprintbib
+    \addcontentsline{toc}{section}{References}
+    \newpage
+}
+
+% Begin the document %
+\begin{document}
+
+% makes the header for assignment/titlepage for essay %
+% \beginessay
+\beginassignemnt
+
+
+\section*{Question 1}
+
+\begin{enumerate}
+    \item
+        Using sage math I was able to code a solution to solve RSA for larger numbers:
+
+        \codefile{python}{q1/q1a.py}
+
+        When decrypting without Chinese remainder theorem we get: 125 loops, best of 3: 6.72 ms per loop.
+
+        When decrypting using the Chinese remainder theorem we get: 125 loops, best of 3: 7.43 ms per loop.
+
+    % \item
+        % Using sage math I was able to code a solution to elliptic curve problem for larger numbers:
+
+        % \codefile{python}{q1/q1b.py}
+\end{enumerate}
+
+\section*{Question 2}
+
+Let $p=1019$\\
+
+Let $q=1231$\\
+
+Let $M=p \cdot q = 1019 \cdot 1231 = 1254389$
+
+Let $s = 1254383$ since $1254383$ and $1254389$ are co-prime.
+
+Using the BBS PRNG algorithm $x_{n+1}=x_n^{2} \mod m$ we get the following numbers\\
+
+\begin{tabular}{*{5}{|c|}}
+    \hline
+        $x_0$ & $x_1$ & $x_2$ & $x_3$ & $x_4$\\\hline
+        36 & 1296 & 425227 & 335957 & 946796 \\\hline\hline
+
+        $x_5 $& $x_6$ & $x_7$ & $x_8$ & $x_9$\\\hline
+        1163324 & 68546 & 867311 & 138368 & 1218506 \\\hline\hline
+
+        $x_{10}$ & $x_{11}$ & $x_{12}$ & $x_{13}$ & $x_{14}$ \\\hline
+        586575 & 108648 & 587414 & 390054 & 1044273\\\hline\hline
+
+        $x_{15} $& $x_{16}$ & $x_{17}$ & $x_{18}$ & $x_{19}$ \\\hline
+        512601 & 412593 & 1106848 & 934364 & 156331\\\hline
+\end{tabular}\\\\
+
+Note that this table was generated using the following code:
+
+\codefile{Javascript}{q2/q2.js}
+
+For real world security it would be ideal to use primes of size 1024 this way the modulus is of size 2048 bits. This would provide the currently minimum recommended security level for confidentiality. To be more secure it would be better to use 2048 bit primes this way the modulus is 4096 bits in length.\\
+
+To have equivalent security to AES-128 the bit length of the modulus would need to be 3072 bits. Thus p and q will each need to be 1536 bits in length ($3072/2=1536)$.
+
+\section*{Question 3}
+
+Using the generator function we get the following bit sequences:\\
+
+$
+    \begin{aligned}
+        g^0 &= 00001\\
+        g^1 &= 00010\\
+        g^2 &= 00100\\
+        g^3 &= 01000\\
+        g^4 &= 10000\\
+        g^5 &= g^2 + 1 = 00101\\
+        g^6 &= g^5 \cdot g^1 = (g^2 + 1) \cdot g^1 = g^3 + g^1 = 01010\\
+        g^7 &= g^6 \cdot g^1 = (g^3 + g^1) \cdot g^1 = g^4 + g^2 = 10100\\
+        g^8 &= g^7 \cdot g^1 = (g^4 + g^2) \cdot g^1 = g^5 + g^3 = 01101\\
+        g^9 &= g^8 \cdot g^1 = (g^5 + g^3) \cdot g^1 = g^6 + g^4 = 11010\\
+        g^{10} &= g^9 \cdot g^1 = (g^6 + g^4) \cdot g^1 = g^7 + g^5 = 10001\\
+        g^{11} &= g^{10} \cdot g^1 = (g^7 + g^5) \cdot g^1 = g^8 + g^6 = 00111\\
+        g^{12} &= g^{11} \cdot g^1 = (g^8 + g^6) \cdot g^1 = g^9 + g^7 = 01110\\
+        g^{13} &= g^{12} \cdot g^1 = (g^9 + g^7) \cdot g^1 = g^{10} + g^8 = 11100\\
+        g^{14} &= g^{13} \cdot g^1 = (g^{10} + g^8) \cdot g^1 = g^{11} + g^9 = 11101\\
+        g^{15} &= g^{14} \cdot g^1 = (g^{11} + g^9) \cdot g^1 = g^{12} + g^{10} = 11111\\
+        g^{16} &= g^{15} \cdot g^1 = (g^{12} + g^{10}) \cdot g^1 = g^{13} + g^{11} = 11011\\
+        g^{17} &= g^{16} \cdot g^1 = (g^{13} + g^{11}) \cdot g^1 = g^{14} + g^{12} = 10011\\
+        g^{18} &= g^{17} \cdot g^1 = (g^{14} + g^{12}) \cdot g^1 = g^{15} + g^{13} = 00011\\
+        g^{19} &= g^{18} \cdot g^1 = (g^{15} + g^{13}) \cdot g^1 = g^{16} + g^{14} = 00110\\
+        g^{20} &= g^{19} \cdot g^1 = (g^{16} + g^{14}) \cdot g^1 = g^{17} + g^{15} = 01100\\
+        g^{21} &= g^{20} \cdot g^1 = (g^{17} + g^{15}) \cdot g^1 = g^{18} + g^{16} = 11000\\
+        g^{22} &= g^{21} \cdot g^1 = (g^{18} + g^{16}) \cdot g^1 = g^{19} + g^{17} = 10101\\
+        g^{23} &= g^{22} \cdot g^1 = (g^{19} + g^{17}) \cdot g^1 = g^{20} + g^{18} = 01111\\
+        g^{24} &= g^{23} \cdot g^1 = (g^{20} + g^{18}) \cdot g^1 = g^{21} + g^{19} = 11110\\
+        g^{25} &= g^{24} \cdot g^1 = (g^{21} + g^{19}) \cdot g^1 = g^{22} + g^{20} = 11001\\
+        g^{26} &= g^{25} \cdot g^1 = (g^{22} + g^{20}) \cdot g^1 = g^{23} + g^{21} = 10111\\
+        g^{27} &= g^{26} \cdot g^1 = (g^{23} + g^{21}) \cdot g^1 = g^{24} + g^{22} = 01011\\
+        g^{28} &= g^{27} \cdot g^1 = (g^{24} + g^{22}) \cdot g^1 = g^{25} + g^{23} = 10110\\
+    \end{aligned}
+$\\\\
+$
+    \begin{aligned}
+        g^{29} &= g^{28} \cdot g^1 = (g^{25} + g^{23}) \cdot g^1 = g^{26} + g^{24} = 01001\\
+        g^{30} &= g^{29} \cdot g^1 = (g^{26} + g^{24}) \cdot g^1 = g^{27} + g^{25} = 10010\\
+        g^{31} &= g^{30} \cdot g^1 = (g^{27} + g^{25}) \cdot g^1 = g^{28} + g^{26} = 00001\\
+    \end{aligned}
+$\\\\
+
+The point at infinity is: 00000.
+
+
+\end{document}
